@@ -1,0 +1,11 @@
+.scrollable-menu {
+    height: auto;
+    max-height: 200px;
+    overflow-x: hidden;
+    z-index: 1000;
+    position: absolute;
+    width: 100%;
+}
+.scrollable-menu button{
+  background-color: #E9E9E9;
+}
