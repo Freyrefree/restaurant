@@ -106,6 +106,18 @@ class SellData {
 	}
 
 
+	public static function getSellRFCReceptor($id){
+		$sql = "SELECT 
+		s.id AS id,
+		c.rfc AS rfc
+		FROM sell s INNER JOIN cliente c ON s.cliente_id = c.id
+		WHERE s.id = $id";
+
+		$query = Executor::doit($sql);
+		return Model::many($query[0],new SellData());
+	}
+
+
 }
 
 ?>

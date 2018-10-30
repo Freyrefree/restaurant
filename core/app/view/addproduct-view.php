@@ -118,9 +118,9 @@
           <label for="inputEmail1" class="control">Categoria</label>
           <select name="category_id" class="form-control " id="category_id" required>
             <option value="">-- SELECCIONE CATEGORIA --</option>
-          <?php foreach(CategoryData::getAll() as $cat):?>
-            <option value="<?php echo $cat->id; ?>"><?php echo $cat->name; ?></option>
-          <?php endforeach; ?>
+            <?php foreach(CategoryData::getAll() as $cat):?>
+              <option value="<?php echo $cat->id; ?>"><?php echo $cat->name; ?></option>
+            <?php endforeach; ?>
           </select>
         </div>
       </div>

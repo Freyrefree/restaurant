@@ -249,7 +249,7 @@
                   </div>
                 </div>
 
-                <div class="col-md-8">
+                <div class="col-md-4">
                   <div class="form-group">
                     <label for="" class="control">Uso CFDI</label>
 
@@ -266,13 +266,21 @@
                   </div>
                 </div>
 
+                <div class="col-md-4">
+                <div id="gifload"></div>
+                </div>
+
               </div>
+
+              <!-- <div class="row">
+                
+              </div> -->
 
             </div>
 
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
             <button type="submit" class="btn btn-primary">Agregar Cliente</button>
           </div>
       </form>    
@@ -286,12 +294,18 @@
 
 $('#formCliente').submit(function(e) {
     e.preventDefault();
+
+    $("#gifload").html('<i class="fa fa-circle-o-notch fa-spin fa-3x fa-fw">');
+
+
+
     var data = $(this).serializeArray();
     $.ajax({
         method: "POST",
         url: "index.php?view=addcliente",
         data: data,
     }).done(function(respuesta) {
+      $("#gifload").html('');
 
         if(respuesta == 1)
         {
