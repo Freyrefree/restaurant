@@ -109,8 +109,11 @@ class SellData {
 	public static function getSellRFCReceptor($id){
 		$sql = "SELECT 
 		s.id AS id,
-		c.rfc AS rfc
+		c.rfc AS rfc,
+		c.cfdi AS cfdi,
+		scfdi.descripcion AS descripcion 
 		FROM sell s INNER JOIN cliente c ON s.cliente_id = c.id
+		INNER JOIN lls_c_usocfdi scfdi ON c.cfdi = scfdi.c_UsoCFDI
 		WHERE s.id = $id";
 
 		$query = Executor::doit($sql);
