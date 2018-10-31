@@ -27,7 +27,7 @@ $receptor = SellData::getSellRFCReceptor($_GET["id"]);
       </div>
     </div>
 
-    <form class="form-horizontal" method="post" id="addproveedor" action="index.php?view=updateproveedor" role="form">
+    <form class="form-horizontal" method="post" id="addproveedor" action="" role="form">
 
       <div class="row">
 
