@@ -20,6 +20,9 @@ if($vistaTrue){
 	}else if($vista == "autoCompleteClaveUnidad"){
 
 		View::load("autoCompleteClaveUnidad");
+	}else if($vista == "lla_agregafactura"){
+		
+		View::load("lla_agregafactura");
 	}else{
 		Module::loadLayout("index");
 	}

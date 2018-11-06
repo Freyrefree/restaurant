@@ -105,43 +105,6 @@ class SellData {
 
 	}
 
-
-	public static function getSellRFCReceptor($id){
-		$sql = "SELECT 
-		s.id AS id,
-		c.rfc AS rfc,
-		c.cfdi AS cfdi,
-		scfdi.descripcion AS descripcion 
-		FROM sell s INNER JOIN cliente c ON s.cliente_id = c.id
-		INNER JOIN lls_c_usocfdi scfdi ON c.cfdi = scfdi.c_UsoCFDI
-		WHERE s.id = $id";
-
-		$query = Executor::doit($sql);
-		return Model::many($query[0],new SellData());
-	}
-
-
-	public static function getSellConceptos($id){
-		$sql = "SELECT o.id AS id,
-		o.product_id AS idProducto,
-		o.q AS cantidad,
-		p.codigoSAT AS codigoSAT,
-		p.code AS codigoInterno,
-		p.description AS descripcionInterna,
-		p.unit AS unidad,
-		p.price_out AS precio,
-		cs.descripcion AS descripcionSAT,
-		cv.nombre AS nombreUnidadSAT
-		FROM operation o LEFT JOIN product p ON o.product_id = p.id
-		LEFT JOIN lls_clave_prodserv cs ON p.codigoSAT = cs.clave_prodserv
-		LEFT JOIN lls_clave_unidad cv ON cv.clave_unidad = p.unit
-		WHERE o.sell_id = $id";
-
-		$query = Executor::doit($sql);
-		return Model::many($query[0],new SellData());
-	}
-
-
 }
 
 ?>

@@ -1,18 +1,21 @@
-
-
-
-
-
-
 <?php
 $sell = SellData::getById($_GET["id"]);
 if($sell!=null):
 
+$idUsuario = $_SESSION["user_id"];
+
 $empresa = EmpresaData::getById(1);
 
-$receptor = SellData::getSellRFCReceptor($_GET["id"]);
+$receptor = FacturacionData::getSellRFCReceptor($_GET["id"]);
 
-$conceptos = SellData::getSellConceptos($_GET["id"]);
+$conceptos = FacturacionData::getSellConceptos($_GET["id"]);
+
+
+if (!FacturacionData::getSellExists($_GET["id"])):
+
+  FacturacionData::addConcepto($_GET["id"],$idUsuario);
+
+endif;
 
 
 
@@ -20,8 +23,6 @@ $conceptos = SellData::getSellConceptos($_GET["id"]);
 
 <div class="col-12">
 	<div class="white-box">
-
-
 
     <div class="row page-title clearfix">
       <div class="page-title-right d-none d-sm-inline-flex">
@@ -33,7 +34,7 @@ $conceptos = SellData::getSellConceptos($_GET["id"]);
       </div>
     </div>
 
-    <form class="form-horizontal" method="post" id="addproveedor" action="" role="form">
+    <form  id="formFactura" class="form-horizontal"  role="form">
 
       <div class="row">
 
@@ -149,13 +150,19 @@ $conceptos = SellData::getSellConceptos($_GET["id"]);
               <thead>
                 <tr>
                   <th>#</th>
-                  <th>Clave SAT</th>
-                  <th>Descripción <br> Producto</th>
-                  <th>Clave <br> Producto</th>
-                  <th>Clave Unidad</th>
+                  <th>Clave</th>
                   <th>Cantidad</th>
-                  <th>Precio</th>
-                  <th>Descuento</th>
+                  <th>Clave Unidad</th>
+                  <th>Valor Unitario</th>
+                  <th>Impuesto <br> Translado</th>
+                  <th>Tipo <br> Factor <br> Translado</th>
+                  <th>Tasa o <br> Cuota</th>
+                  <th>Importe <br> Translado</th>
+                  <th>Impuesto <br> Retención</th>
+                  <th>Tipo <br> Factor <br> Retención</th>
+                  <th>Tasa o<br> Cuota</th>
+                  <th>Importe<br> Retención</th>
+                  <th>Importe Total</th>
                 </tr>
               </thead>
               <?php 
@@ -167,17 +174,24 @@ $conceptos = SellData::getSellConceptos($_GET["id"]);
               $contador=1; 
               $total = 0;
               foreach($conceptos as $concepto):
-              $total+=$concepto->cantidad*$concepto->precio;
+              $total+=$concepto->cantidad*$concepto->valor_unitario;
               
               ?>
                 <tr>
                   <td><?php echo $contador++; ?></td>
-                  <td><?php echo $concepto->codigoSAT.' - ' .$concepto->descripcionSAT; ?></td>
-                  <td><?php echo $concepto->descripcionInterna; ?></td>
-                  <td><?php echo $concepto->codigoInterno; ?></td>
-                  <td><?php echo $concepto->unidad.' - '.$concepto->nombreUnidadSAT; ?></td>
+                  <td><?php echo $concepto->clave_sat ;?></td>
                   <td><?php echo $concepto->cantidad; ?></td>
-                  <td><b>$ <?php echo number_format((float)$concepto->cantidad * $concepto->precio,2,'.','');?></b></td>
+                  <td><?php echo $concepto->nombreUnidad; ?></td>
+                  <td><b>$ <?php echo number_format($concepto->valor_unitario,2,'.',''); ?></b></td>
+                  <td><?php echo $concepto->tipo_traslado; ?></td>
+                  <td><?php echo $concepto->tipo_factor_translado; ?></td>
+                  <td><?php echo $concepto->valor_tasa_cuota_translado; ?></td>
+                  <td><?php echo $concepto->importe_translado; ?></td>
+                  <td><?php echo $concepto->tipo_retencion; ?></td>
+                  <td><?php echo $concepto->tipo_factor_retencion; ?></td>
+                  <td><?php echo $concepto->valor_tasa_cuota_retencion; ?></td>
+                  <td><?php echo $concepto->importe_retencion; ?></td>
+                  <td><b>$ <?php echo number_format((float)$concepto->cantidad * $concepto->valor_unitario,2,'.','');?></b></td>
                   <td></td>
                                
                 </tr>
@@ -199,25 +213,19 @@ $conceptos = SellData::getSellConceptos($_GET["id"]);
       </div>
 
       <div class="row">
-        <div class="col-md-3">
+        <div class="col-md-4">
           <h1>Total: $ <?php echo number_format($total, 2,'.',''); ?></h1>
         </div>
-      </div>
 
-      <div class="row">
-
-        <div class="col-md-12" align="right">
+        <div class="col-md-4" align="right">
         <br>
-          <div class="form-group">
-           
-          </div>
+          <button type="submit" class="btn btn-primary">Timbrar</button>
         </div>
-
       </div>
-
-
 
     </form>
+
+    
 
   </div>
 </div>
@@ -272,6 +280,79 @@ $conceptos = SellData::getSellConceptos($_GET["id"]);
   
 
 
+</script>
+
+
+<script>
+
+$('#formFactura').submit(function(e) {
+  e.preventDefault();
+  var data = $(this).serializeArray();
+  //data.push({name: 'tag', value: 'login'});
+  $.ajax({
+      method: "POST",
+      url: "index.php?view=lla_agregafactura",
+      data: data
+  }).done(function(respuesta) {
+      
+      alert(respuesta);
+      
+      });
+  
+});
+
+</script>
+
+
+<script>
+function timbrar(){
+  var id = "<?php echo $_GET["id"]; ?>"
+  var parametros ="id="+ id;  
+
+
+     $.ajax({
+      data:  parametros,
+      url: '../controllers/controller.facturacion.class.php',
+      type: 'post',
+      beforeSend: function () {  
+      $("#procesando").show("slow");                                    
+          //$('#myMensajeG').modal('show');
+          //$('#mensajesGif').html('<img src="../img/loader1.gif"/>');
+          //$("#mensajesC").html("Procesando, espere por favor...");
+      },
+      success: function(data){ 
+      	$("#procesando").hide("slow");
+      	console.log("respuesta");
+        console.log(data);
+          $('#myMensajeG').modal('hide');
+
+          var dato=data;
+          var separador= "->";
+
+          var re = dato.split(separador);
+
+          var mensaje=re[0];
+          var devuelto=re[1];
+
+          if(mensaje=="factura"){
+             borrar_pre(id);//funcion para borrar la prefactura
+
+             $("#id_xml").val(id);
+             $("#uuid_xml").val(devuelto);
+
+            // document.getElementById("btnpdf").style.display="block";
+             
+             downloadxml(devuelto);
+          }
+          if(mensaje=="error"){
+             $('#myModalMensajes').modal('show');
+             $('#mensaje10').text(devuelto);            
+          }
+       }
+
+    });  
+ 
+}
 </script>
 
 
