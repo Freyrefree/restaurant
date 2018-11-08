@@ -51,7 +51,16 @@ class ProductData {
 
 
 	public static function getById($id){
-		$sql = "select * from ".self::$tablename." where id=$id";
+		$sql = "SELECT * FROM ".self::$tablename." WHERE id=$id";
+		$query = Executor::doit($sql);
+		return Model::one($query[0],new ProductData());
+	}
+	public static function getByIdInfoSAT($id){
+		$sql = "SELECT 
+		p.*,
+		cp.descripcion AS descripcionSAT
+		FROM product p LEFT JOIN lls_clave_prodserv cp ON p.codigoSAT=cp.clave_prodserv 
+		WHERE p.id = $id";
 		$query = Executor::doit($sql);
 		return Model::one($query[0],new ProductData());
 	}

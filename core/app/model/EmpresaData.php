@@ -36,6 +36,12 @@ class EmpresaData {
 		$sql = "SELECT * FROM ".self::$tablename." WHERE  id_empresa = $id";
 		$query = Executor::doit($sql);
 		return Model::one($query[0],new EmpresaData());
+        }
+        
+        public static function getByRFC($rfc){
+		$sql = "SELECT * FROM ".self::$tablename." WHERE  rfc = \"$rfc\" ";
+		$query = Executor::doit($sql);
+		return Model::one($query[0],new EmpresaData());
 	}
 
 

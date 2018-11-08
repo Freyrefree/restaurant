@@ -10,6 +10,8 @@ $receptor = FacturacionData::getSellRFCReceptor($_GET["id"]);
 
 $conceptos = FacturacionData::getSellConceptos($_GET["id"]);
 
+$venta = SellData::getById($_GET["id"]);
+
 
 if (!FacturacionData::getSellExists($_GET["id"])):
 
@@ -36,12 +38,14 @@ endif;
 
     <form  id="formFactura" class="form-horizontal"  role="form">
 
+    <input type="hidden" name="conceptoClave" id="conceptoClave" value="<?php echo $_GET["id"]; ?>">
+
       <div class="row">
 
         <div class="col-md-4">
           <div class="form-group">
             <label>Tipo de Comprobante</label>
-            <select class="form-control" name="tc" id="tc" readonly  required>
+            <select class="form-control" name="tipoDocumento" id="tipoDocumento" readonly  required>
                 <option value="">-- Seleccione un tipo de comprobante</option>
                 <option value="Ingreso" selected>Ingreso</option>
                 <option value="Egreso">Egreso</option>
@@ -60,6 +64,7 @@ endif;
           <div class="form-group">
             <label>RFC Receptor</label>
 			      <input type="text" name="r_receptor" id="r_receptor" value="<?php echo $receptor[0]->rfc ?>" class="form-control" placeholder="RFC Receptor" readonly>
+            <input type="hidden" name="idCliente" id="idCliente" value="<?php echo $venta->cliente_id ?>">
           </div>
         </div>
 
@@ -296,7 +301,7 @@ $('#formFactura').submit(function(e) {
   }).done(function(respuesta) {
       
       alert(respuesta);
-      
+
       });
   
 });

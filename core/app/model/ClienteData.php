@@ -104,7 +104,7 @@ class ClienteData {
 
 
 	public static function getById($id){
-		$sql = "select * from ".self::$tablename." where id=$id";
+		$sql = "SELECT * FROM ".self::$tablename." WHERE id=$id";
 		$query = Executor::doit($sql);
 		return Model::one($query[0],new ClienteData());
 	}
