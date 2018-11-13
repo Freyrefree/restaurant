@@ -173,6 +173,18 @@ class FacturacionData {
 		return Model::one($query[0],new FacturacionData());
     }
 
+    public static function getFacturaByConceptoClave($id){
+        $sql = "SELECT * FROM ".self::$tablename2." WHERE concepto_clave=$id";
+		$query = Executor::doit($sql);
+		return Model::one($query[0],new FacturacionData());
+    }
+
+    public static function getFacturaByFolioFiscal($uuid){
+        $sql = "SELECT * FROM ".self::$tablename2." WHERE folio_fiscal=$uuid";
+		$query = Executor::doit($sql);
+		return Model::one($query[0],new FacturacionData());
+    }
+
     public static function getUltimoFolio($rfc,$documento){
         $sql ="SELECT folio+1 AS folio,serie FROM ".self::$tablename2." 
         WHERE tipo_documento='$documento' AND rfc_emisor='$rfc' ORDER BY folio DESC LIMIT 1";

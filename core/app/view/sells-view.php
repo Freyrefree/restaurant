@@ -1,3 +1,7 @@
+<?php
+//$factura = new FacturacionData();
+?>
+
  <!-- ===== Plugin CSS ===== -->
 <link href="plugins/components/datatables/jquery.dataTables.min.css" rel="stylesheet" type="text/css" />
 <style>
@@ -45,6 +49,8 @@
 						<th>Total</th>
 						<th>Status</th>
 						<th>Fecha</th>
+						<th>Estatus <br> Factura</th>
+						<th>Documentos</th>
 					</tr>
 				</thead>
 				<?php 
@@ -61,8 +67,36 @@
 				?>
 				<tbody>
 					<?php foreach($products as $sell):?>
+
+					<?php
+						$factura		=FacturacionData::getFacturaByConceptoClave($sell->id);
+						$estatusFact = "";
+						if($factura != null){
+
+							$estatusFact 	= $factura->estatus_factura;
+
+							switch ($estatusFact) {
+								case 1:
+									$estatusFact = "Pendiente";
+									break;
+								case 2:
+									$estatusFact = "Facturada";
+									break;
+								case 3:
+									$estatusFact = "Cancelada";
+									break;
+								case 3:
+									$estatusFact = "Cancelada NC";
+									break;
+								default:
+									$estatusFact = "";
+							}
+
+						}
+						
+					?>
 					<tr>
-						<td style="width:30px;"><a href="index.php?view=onesell&id=<?php echo $sell->id; ?>" class="btn btn-xs btn-default"><i class="glyphicon glyphicon-eye-open"></i></a></td>
+						<td style="width:30px;"><a href="index.php?view=onesell&id=<?php echo $sell->id; ?>" class="btn btn-sm btn-default"><i class="glyphicon glyphicon-eye-open"></i></a></td>
 						<td style="width:60px;">#<?php echo $sell->id;?></td>
 						<td style="width:60px;"><?php echo $sell->item_id;?></td>
 
@@ -103,6 +137,14 @@
 						</td>
 
 						<td style="width:180px;"><?php echo  $sell->created_at;  ?></td>
+						<td><?php echo $estatusFact; ?></td>
+						<td>
+							<?php if($estatusFact != ""):?>
+							<i class="fa fa-file-code-o" aria-hidden="true" onclick="downloadXML('<?php echo $factura->folio_fiscal; ?>');" id="xml" name="xml" style="color:blue;font-size:20px;cursor:pointer" title="Descargar XML"></i>
+							&nbsp; &nbsp; &nbsp; 
+							<i class="fa fa-file-pdf-o" aria-hidden="true"  onclick="downloadPDF('<?php echo $factura->folio_fiscal; ?>');" id="pdf" name="pdf" style="color:red;font-size:20px;cursor:pointer" title="Descargar PDf"></i>
+							<?php endif; ?>
+						</td>
 
 					</tr>
 					<?php endforeach; ?>
@@ -124,45 +166,75 @@
     <script src="css/1.2.2/js/dataTables.buttons.min.js"></script>
 
 
-    <script>
-            
-                $('#example23').DataTable({
-                    "pageLength": 8,
-                    "ordering": false,
-                    "lengthMenu": [[8, 15, 25, 50, -1], [8, 15, 25, 50, "Todos"]],
-                    "language": {
-                        "paginate": {
-                            "previous": "<i class='mdi mdi-chevron-left'>",
-                            "next": "<i class='mdi mdi-chevron-right'>"
-                        }
-                    },
-                    language: {
-                    "decimal": "",
-                    "emptyTable": "No hay información",
-                    "info": "Mostrando _START_ a _END_ de _TOTAL_ Entradas",
-                    "infoEmpty": "Mostrando 0 to 0 of 0 Entradas",
-                    "infoFiltered": "(Filtrado de _MAX_ total entradas)",
-                    "infoPostFix": "",
-                    "thousands": ",",
-                    "lengthMenu": "Mostrar _MENU_ Entradas",
-                    "loadingRecords": "Cargando...",
-                    "processing": "Procesando...",
-                    "search": "Buscar:",
-                    "zeroRecords": "Sin resultados encontrados",
-                    "paginate": {
-                        "first": "Primero",
-                        "last": "Ultimo",
-                        "next": "Siguiente",
-                        "previous": "Anterior"
-                    }
-                    },
-                    "drawCallback": function () {
-                        $('.dataTables_paginate > .pagination').addClass('pagination-rounded');
-                    }
-                });
-          
+<script>
+		
+			$('#example23').DataTable({
+				"pageLength": 8,
+				"ordering": false,
+				"lengthMenu": [[8, 15, 25, 50, -1], [8, 15, 25, 50, "Todos"]],
+				"language": {
+					"paginate": {
+						"previous": "<i class='mdi mdi-chevron-left'>",
+						"next": "<i class='mdi mdi-chevron-right'>"
+					}
+				},
+				language: {
+				"decimal": "",
+				"emptyTable": "No hay información",
+				"info": "Mostrando _START_ a _END_ de _TOTAL_ Entradas",
+				"infoEmpty": "Mostrando 0 to 0 of 0 Entradas",
+				"infoFiltered": "(Filtrado de _MAX_ total entradas)",
+				"infoPostFix": "",
+				"thousands": ",",
+				"lengthMenu": "Mostrar _MENU_ Entradas",
+				"loadingRecords": "Cargando...",
+				"processing": "Procesando...",
+				"search": "Buscar:",
+				"zeroRecords": "Sin resultados encontrados",
+				"paginate": {
+					"first": "Primero",
+					"last": "Ultimo",
+					"next": "Siguiente",
+					"previous": "Anterior"
+				}
+				},
+				"drawCallback": function () {
+					$('.dataTables_paginate > .pagination').addClass('pagination-rounded');
+				}
+			});
+		
 
 
-        </script>
+</script>
+
+<script>
+// ************************************Descargar XML*****************************************
+
+function downloadXML(uuid){
+	alert(uuid);
+
+	var URL = "";
+
+	if(uuid != null ){ 
+		URL = "comprobantesCfdi/"+uuid+".xml";
+		window.location.href = 'index.php?view=descargaxml'+'&archivo='+URL+'&uuid='+uuid;
+		//"index.php?view=lla_agregafactura"
+	}else{
+		return false;
+	}   
+}
+
+// ************************************ END *************************************************
+
+// ************************************Descargar PDF*****************************************
+function downloadPDF(uuid){
+
+	
+
+}
+
+
+</script>
+
  
 

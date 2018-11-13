@@ -23,6 +23,9 @@ if($vistaTrue){
 	}else if($vista == "lla_agregafactura"){
 		
 		View::load("lla_agregafactura");
+	}else if($vista == "descargaxml"){
+
+		View::load("descargaxml");
 	}else{
 		Module::loadLayout("index");
 	}

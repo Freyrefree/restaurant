@@ -41,6 +41,16 @@ class UsoCFDI {
 		return $array;
 	}
 
+
+	public static function getByCFDI($cfdi)
+    {
+		$sql = "SELECT * FROM ".self::$tablename ."WHERE c_UsoCFDI = '$cfdi'";
+		$query = Executor::doit($sql);
+		return Model::one($query[0],new EmpresaData());
+	}
+
+
+
 }
 
 ?>
